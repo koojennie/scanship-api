@@ -25,6 +25,7 @@ function storePaket($paketInput) {
     $nama_penerima = mysqli_real_escape_string($conn, $paketInput['nama_penerima']);
     $notelp_penerima = mysqli_real_escape_string($conn, $paketInput['notelp_penerima']);
     $alamat_tujuan = mysqli_real_escape_string($conn, $paketInput['alamat_tujuan']);
+    $tanggal_penerimaan = mysqli_real_escape_string($conn, $paketInput['tanggal_penerimaan']);
 
     if(empty(trim($no_resi))) {
         return error422('Masukkan No Resi');
@@ -176,6 +177,7 @@ function updatePaket($paketInput, $paketParams) {
     $nama_penerima = mysqli_real_escape_string($conn, $paketInput['nama_penerima']);
     $notelp_penerima = mysqli_real_escape_string($conn, $paketInput['notelp_penerima']);
     $alamat_tujuan = mysqli_real_escape_string($conn, $paketInput['alamat_tujuan']);
+    $tanggal_penerimaan = mysqli_real_escape_string($conn, $paketInput['tanggal_penerimaan']);
 
     if(empty(trim($tanggal_pengiriman))) {
         return error422('Masukkan Tanggal Pengiriman');
@@ -197,7 +199,7 @@ function updatePaket($paketInput, $paketParams) {
     }
 
     else {
-        $query = "UPDATE paket SET tanggal_pengiriman='$tanggal_pengiriman', nama_pengirim='$nama_pengirim', asal_pengirim='$asal_pengirim', nama_penerima='$nama_penerima', notelp_penerima='$notelp_penerima', alamat_tujuan='$alamat_tujuan' WHERE no_resi='$no_resi' LIMIT 1";
+        $query = "UPDATE paket SET tanggal_pengiriman='$tanggal_pengiriman', nama_pengirim='$nama_pengirim', asal_pengirim='$asal_pengirim', nama_penerima='$nama_penerima', notelp_penerima='$notelp_penerima', alamat_tujuan='$alamat_tujuan', tanggal_penerimaan='$tanggal_penerimaan' WHERE no_resi='$no_resi' LIMIT 1";
         $result = mysqli_query($conn, $query);
 
         if($result) {

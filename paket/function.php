@@ -159,46 +159,76 @@ function getPaketList() {
 function getPaket($paketParams) {
     global $conn;
 
-    if($paketParams['no_resi'] == null) {
+    if (empty($paketParams['no_resi'])) {
         return error422('Masukkan No Resi Paket');
     }
 
     $paketresiId = mysqli_real_escape_string($conn, $paketParams['no_resi']);
 
-    $query = "SELECT * FROM paket WHERE no_resi='$paketresiId' LIMIT 1";
+    // Query untuk mendapatkan semua data dari paket dan statuspaket
+    $query = "SELECT p.*, s.id_status, s.status_tanggal, s.status_lokasi
+    FROM paket p
+    LEFT JOIN statuspaket s ON p.no_resi = s.no_resi
+    WHERE p.no_resi = '$paketresiId'
+    ORDER BY s.status_tanggal DESC";
+
     $result = mysqli_query($conn, $query);
 
-    if($result) {
+    if ($result) {
+        if (mysqli_num_rows($result) > 0) {
+            $packageData = null;
+            $statusData = [];
 
-        if(mysqli_num_rows($result) == 1) {
-            $res = mysqli_fetch_assoc($result);
+            while ($row = mysqli_fetch_assoc($result)) {
+                if (!$packageData) {
+                    // Ambil data paket hanya sekali
+                    $packageData = [
+                        'no_resi' => $row['no_resi'],
+                        'tanggal_pengiriman' => $row['tanggal_pengiriman'],
+                        'nama_pengirim' => $row['nama_pengirim'],
+                        'asal_pengirim' => $row['asal_pengirim'],
+                        'nama_penerima' => $row['nama_penerima'],
+                        'notelp_penerima' => $row['notelp_penerima'],
+                        'alamat_tujuan' => $row['alamat_tujuan'],
+                        'tanggal_penerimaan' => $row['tanggal_penerimaan']
+                    ];
+                }
+                // Tambahkan status ke array statusData
+                $statusData[] = [
+                    'id_status' => $row['id_status'],
+                    'status_tanggal' => $row['status_tanggal'],
+                    'status_lokasi' => $row['status_lokasi']
+                ];
+            }
 
-            $data = [
+            $response = [
                 'status' => 200,
                 'message' => 'Delivery Package Fetched Successfully',
-                'data' => $res
+                'data' => [
+                    'package' => $packageData,
+                    'status' => $statusData
+                ]
             ];
-            header("HTTP/1.0 200 Success");
-            return json_encode($data);
-        }
-        else {
-            $data = [
+            header("HTTP/1.0 200 OK");
+            return json_encode($response);
+        } else {
+            $response = [
                 'status' => 404,
                 'message' => 'No Delivery Package Found',
             ];
             header("HTTP/1.0 404 Not Found");
-            return json_encode($data);
+            return json_encode($response);
         }
-    }
-    else {
-        $data = [
+    } else {
+        $response = [
             'status' => 500,
             'message' => 'Internal Server Error',
         ];
         header("HTTP/1.0 500 Internal Server Error");
-        return json_encode($data);
+        return json_encode($response);
     }
 }
+
 
 function updatePaket($paketInput, $paketParams) {
 

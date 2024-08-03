@@ -54,20 +54,21 @@ function storePaket($paketInput) {
     mysqli_begin_transaction($conn);
 
     try {
-        // Insert into paket
-        $query1 = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan')";
+
+        // Insert into status
+        $query1 = "INSERT INTO statuspaket (status_tanggal, status_lokasi, no_resi) VALUES ('$status_tanggal', '$status_lokasi', '$no_resi')";
         $result1 = mysqli_query($conn, $query1);
 
         if(!$result1) {
-            throw new Exception("Error inserting into paket");
+            throw new Exception("Error inserting into status");
         }
 
-        // Insert into status
-        $query2 = "INSERT INTO status (status_tanggal, status_lokasi, no_resi) VALUES ('$status_tanggal', '$status_lokasi', '$no_resi')";
+        // Insert into paket
+        $query2 = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan')";
         $result2 = mysqli_query($conn, $query2);
 
         if(!$result2) {
-            throw new Exception("Error inserting into status");
+            throw new Exception("Error inserting into paket");
         }
 
         // Commit transaction

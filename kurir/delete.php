@@ -2,23 +2,17 @@
 
 header('Access-Control-Allow-Origin:*');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Method: GET');
+header('Access-Control-Allow-Method: DELETE');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('function.php');
 
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-if($requestMethod == "GET") {
+if($requestMethod == "DELETE") {
 
-    if(isset($_GET['id_kurir'])) {
-        $kurir = getKurir($_GET);
-        echo $kurir;
-    }
-    else {
-        $kurirList = getKurirList();
-        echo $kurirList;
-    }
+    $deleteKurir = deleteKurir($_GET);
+    echo $deleteKurir;
 
 }
 else

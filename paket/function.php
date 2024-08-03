@@ -26,6 +26,8 @@ function storePaket($paketInput) {
     $notelp_penerima = mysqli_real_escape_string($conn, $paketInput['notelp_penerima']);
     $alamat_tujuan = mysqli_real_escape_string($conn, $paketInput['alamat_tujuan']);
     $tanggal_penerimaan = mysqli_real_escape_string($conn, $paketInput['tanggal_penerimaan']);
+    $status_tanggal = mysqli_real_escape_string($conn, $paketInput['status_tanggal']);
+    $status_lokasi = mysqli_real_escape_string($conn, $paketInput['status_lokasi']);
 
     if(empty(trim($no_resi))) {
         return error422('Masukkan No Resi');
@@ -49,28 +51,66 @@ function storePaket($paketInput) {
         return error422('Masukkan Alamat Tujuan');
     }
 
-    else {
-        $query = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan')";
-        $result = mysqli_query($conn, $query);
+    mysqli_begin_transaction($conn);
 
-        if($result) {
-            $data = [
-                'status' => 201,
-                'message' => 'Delivery Package Created Successfully',
-            ];
-            header("HTTP/1.0 201 Created");
-            return json_encode($data);
+    try {
+        // Insert into paket
+        $query1 = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan')";
+        $result1 = mysqli_query($conn, $query1);
 
+        if(!$result1) {
+            throw new Exception("Error inserting into paket");
         }
-        else {
-            $data = [
-                'status' => 500,
-                'message' => 'Internal Server Error',
-            ];
-            header("HTTP/1.0 500 Internal Server Error");
-            return json_encode($data);
+
+        // Insert into status
+        $query2 = "INSERT INTO status (status_tanggal, status_lokasi, no_resi) VALUES ('$status_tanggal', '$status_lokasi', '$no_resi')";
+        $result2 = mysqli_query($conn, $query2);
+
+        if(!$result2) {
+            throw new Exception("Error inserting into status");
         }
+
+        // Commit transaction
+        mysqli_commit($conn);
+
+        $data = [
+            'status' => 201,
+            'message' => 'Delivery Package and Status Created Successfully',
+        ];
+        header("HTTP/1.0 201 Created");
+        return json_encode($data);
+
+    } catch (Exception $e) {
+
+        $data = [
+            'status' => 500,
+            'message' => 'Internal Server Error: ' . $e->getMessage(),
+        ];
+        header("HTTP/1.0 500 Internal Server Error");
+        return json_encode($data);
     }
+    // else {
+    //     $query = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan')";
+    //     $result = mysqli_query($conn, $query);
+
+    //     if($result) {
+    //         $data = [
+    //             'status' => 201,
+    //             'message' => 'Delivery Package Created Successfully',
+    //         ];
+    //         header("HTTP/1.0 201 Created");
+    //         return json_encode($data);
+
+    //     }
+    //     else {
+    //         $data = [
+    //             'status' => 500,
+    //             'message' => 'Internal Server Error',
+    //         ];
+    //         header("HTTP/1.0 500 Internal Server Error");
+    //         return json_encode($data);
+    //     }
+    // }
 
 }
 

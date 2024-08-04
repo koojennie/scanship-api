@@ -1,38 +1,53 @@
 <?php
 
+session_start();
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-header('Access-Control-Allow-Origin:*');
-header('Content-Type: application/json');
-header('Access-Control-Allow-Method: POST');
-header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'){
 
-include('function.php');
 
-$requestMethod = $_SERVER["REQUEST_METHOD"];
+    header('Access-Control-Allow-Origin:*');
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Method: POST');
+    header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
-if($requestMethod == 'POST') {
+    include('function.php');
 
-    $inputData = json_decode(file_get_contents("php://input"), true);
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-    if(empty($inputData)) {
-        $storePaket = storePaket($_POST);
+    if($requestMethod == 'POST') {
+
+        $inputData = json_decode(file_get_contents("php://input"), true);
+
+        if(empty($inputData)) {
+            $storePaket = storePaket($_POST);
+        }
+        else {
+            $storePaket = storePaket($inputData);
+        }
+
+        echo $storePaket;
     }
-    else {
-        $storePaket = storePaket($inputData);
+    else
+    {
+        $data = [
+            'status' => 405,
+            'message' => $requestMethod. 'Method Not Allowed',
+        ];
+        header("HTTP/1.0 405 Method Not Allowed");
+        echo json_encode($data);
     }
-
-    echo $storePaket;
-}
-else
-{
+} else {
+    // Pengguna tidak memiliki akses ke halaman ini
     $data = [
-        'status' => 405,
-        'message' => $requestMethod. 'Method Not Allowed',
+        'status' => 403,
+        'message' => 'Forbidden: You do not have access to this page',
     ];
-    header("HTTP/1.0 405 Method Not Allowed");
+    header("HTTP/1.0 403 Forbidden");
     echo json_encode($data);
+    exit;
 }
 ?>

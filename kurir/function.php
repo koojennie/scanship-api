@@ -24,6 +24,8 @@ function storeKurir($kurirInput) {
     $nama_kurir = mysqli_real_escape_string($conn, $kurirInput['nama_kurir']);
     $pw_kurir = mysqli_real_escape_string($conn, $kurirInput['pw_kurir']);
     $pw_kurir = password_hash($pw_kurir, PASSWORD_DEFAULT);
+    $email_kurir = mysqli_real_escape_string($conn, $kurirInput['email_kurir']);
+    $notelp_kurir = mysqli_real_escape_string($conn, $kurirInput['notelp_kurir']);
 
     if(empty(trim($id_kurir))) {
         return error422('Masukkan ID Kurir');
@@ -37,9 +39,15 @@ function storeKurir($kurirInput) {
     else if(empty(trim($pw_kurir))) {
         return error422('Masukkan Password Kurir');
     }
+    else if(empty(trim($email_kurir))) {
+        return error422('Masukkan Email Kurir');
+    }
+    else if(empty(trim($notelp_kurir))) {
+        return error422('Masukkan Nomor Telepon Kurir');
+    }
 
     else {
-        $query = "INSERT INTO kurir (id_kurir, usn_kurir, nama_kurir, pw_kurir) VALUES ('$id_kurir', '$usn_kurir', '$nama_kurir', '$pw_kurir')";
+        $query = "INSERT INTO kurir (id_kurir, usn_kurir, nama_kurir, pw_kurir, email_kurir, notelp_kurir) VALUES ('$id_kurir', '$usn_kurir', '$nama_kurir', '$pw_kurir', '$email_kurir', '$notelp_kurir')";
         $result = mysqli_query($conn, $query);
 
         if($result) {
@@ -162,8 +170,11 @@ function updateKurir($kurirInput, $kurirParams) {
     $id_kurir = mysqli_real_escape_string($conn, $kurirInput['id_kurir']);
     $usn_kurir = mysqli_real_escape_string($conn, $kurirInput['usn_kurir']);
     $nama_kurir = mysqli_real_escape_string($conn, $kurirInput['nama_kurir']);
+    $new_pw_kurir = mysqli_real_escape_string($conn, $kurirInput['new_pw_kurir']);
     $new_pw_kurir = password_hash($new_pw_kurir, PASSWORD_DEFAULT);
     $change_pw_kurir = isset($kurirInput['change_password']);
+    $email_kurir = mysqli_real_escape_string($conn, $kurirInput['email_kurir']);
+    $notelp_kurir = mysqli_real_escape_string($conn, $kurirInput['notelp_kurir']);
 
     if(empty(trim($usn_kurir))) {
         return error422('Masukkan Username Kurir');
@@ -171,12 +182,18 @@ function updateKurir($kurirInput, $kurirParams) {
     else if(empty(trim($nama_kurir))) {
         return error422('Masukkan Nama Kurir');
     }
+    else if(empty(trim($email_kurir))) {
+        return error422('Masukkan Email Kurir');
+    }
+    else if(empty(trim($notelp_kurir))) {
+        return error422('Masukkan Nomor Telepon Kurir');
+    }
 
     if($change_pw_kurir && !empty($new_pw_kurir)) {
-        $query = "UPDATE kurir SET usn_kurir='$usn_kurir', nama_kurir='$nama_kurir', pw_user='$new_pw_kurir' WHERE id_kurir='$id_kurir' LIMIT 1";
+        $query = "UPDATE kurir SET usn_kurir='$usn_kurir', nama_kurir='$nama_kurir', pw_user='$new_pw_kurir', email_kurir='$email_kurir', notelp_kurir='$notelp_kurir' WHERE id_kurir='$id_kurir' LIMIT 1";
     }
     else {
-        $query = "UPDATE kurir SET usn_kurir='$usn_kurir', nama_kurir='$nama_kurir' WHERE id_kurir='$id_kurir' LIMIT 1";
+        $query = "UPDATE kurir SET usn_kurir='$usn_kurir', nama_kurir='$nama_kurir', email_kurir='$email_kurir', notelp_kurir='$notelp_kurir' WHERE id_kurir='$id_kurir' LIMIT 1";
     }
         $result = mysqli_query($conn, $query);
 

@@ -166,11 +166,15 @@ function getPaket($paketParams) {
     $paketresiId = mysqli_real_escape_string($conn, $paketParams['no_resi']);
 
     // Query untuk mendapatkan semua data dari paket dan statuspaket
-    $query = "SELECT p.*, s.id_status, s.status_tanggal, s.status_lokasi
-    FROM paket p
-    LEFT JOIN statuspaket s ON p.no_resi = s.no_resi
-    WHERE p.no_resi = '$paketresiId'
-    ORDER BY s.status_tanggal DESC";
+    $query = "
+        SELECT p.*, s.id_status, s.status_tanggal, s.status_lokasi, k.id_kurir, k.usn_kurir, k.nama_kurir, k.email_kurir, k.notelp_kurir
+        FROM paket p
+        INNER JOIN statuspaket s ON p.no_resi = s.no_resi
+        LEFT JOIN kurir k ON p.id_kurir = k.id_kurir
+        WHERE p.no_resi = '$paketresiId'
+        ORDER BY s.status_tanggal DESC
+    ";
+
 
     $result = mysqli_query($conn, $query);
 
@@ -190,7 +194,12 @@ function getPaket($paketParams) {
                         'nama_penerima' => $row['nama_penerima'],
                         'notelp_penerima' => $row['notelp_penerima'],
                         'alamat_tujuan' => $row['alamat_tujuan'],
-                        'tanggal_penerimaan' => $row['tanggal_penerimaan']
+                        'tanggal_penerimaan' => $row['tanggal_penerimaan'],
+                        'id_kurir' => $row['id_kurir'],
+                        'usn_kurir' => $row['usn_kurir'],
+                        'nama_kurir' => $row['nama_kurir'],
+                        'email_kurir' => $row['email_kurir'],
+                        'notelp_kurir' => $row['notelp_kurir']
                     ];
                 }
                 // Tambahkan status ke array statusData

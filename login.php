@@ -81,7 +81,7 @@ if($requestMethod == "POST") {
                 'message' => 'Login Successfully as a Kurir',
                 'data' => [
                     'id' => $user['id_kurir'],
-                    'email' => $user['usn_kurir'],
+                    'email' => $user['email_kurir'],
                     'name' => $user['nama_kurir'],
                     'role' => 'kurir'
                 ]

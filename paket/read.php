@@ -1,33 +1,48 @@
 <?php
+session_start();
 
-header('Access-Control-Allow-Origin:*');
-header('Content-Type: application/json');
-header('Access-Control-Allow-Method: GET');
-header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+// memeriksa apakah pengguna sudah login dan memiliki peran "admin
 
-include('function.php');
+if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'){
 
-$requestMethod = $_SERVER["REQUEST_METHOD"];
+    header('Access-Control-Allow-Origin:*');
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Method: GET');
+    header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
-if($requestMethod == "GET") {
+    include('function.php');
 
-    if(isset($_GET['no_resi'])) {
-        $paket = getPaket($_GET);
-        echo $paket;
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+
+    if($requestMethod == "GET") {
+
+        if(isset($_GET['no_resi'])) {
+            $paket = getPaket($_GET);
+            echo $paket;
+        }
+        else {
+            $paketList = getPaketList();
+            echo $paketList;
+        }
+
     }
-    else {
-        $paketList = getPaketList();
-        echo $paketList;
+    else
+    {
+        $data = [
+            'status' => 405,
+            'message' => $requestMethod. ' Method Not Allowed',
+        ];
+        header("HTTP/1.0 405 Method Not Allowed");
+        echo json_encode($data);
     }
-
-}
-else
-{
+} else {
+    // Pengguna tidak memiliki akses ke halaman ini
     $data = [
-        'status' => 405,
-        'message' => $requestMethod. ' Method Not Allowed',
+        'status' => 403,
+        'message' => 'Forbidden: You do not have access to this page',
     ];
-    header("HTTP/1.0 405 Method Not Allowed");
+    header("HTTP/1.0 403 Forbidden");
     echo json_encode($data);
+    exit;
 }
 ?>

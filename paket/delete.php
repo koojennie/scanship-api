@@ -1,27 +1,41 @@
 <?php
+session_start();
 
-header('Access-Control-Allow-Origin:*');
-header('Content-Type: application/json');
-header('Access-Control-Allow-Method: DELETE');
-header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'){
 
-include('function.php');
 
-$requestMethod = $_SERVER["REQUEST_METHOD"];
+    header('Access-Control-Allow-Origin:*');
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Method: DELETE');
+    header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
-if($requestMethod == "DELETE") {
+    include('function.php');
 
-    $deletePaket = deletePaket($_GET);
-    echo $deletePaket;
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-}
-else
-{
+    if($requestMethod == "DELETE") {
+
+        $deletePaket = deletePaket($_GET);
+        echo $deletePaket;
+
+    }
+    else
+    {
+        $data = [
+            'status' => 405,
+            'message' => $requestMethod. ' Method Not Allowed',
+        ];
+        header("HTTP/1.0 405 Method Not Allowed");
+        echo json_encode($data);
+    }
+} else {
+    // Pengguna tidak memiliki akses ke halaman ini
     $data = [
-        'status' => 405,
-        'message' => $requestMethod. ' Method Not Allowed',
+        'status' => 403,
+        'message' => 'Forbidden: You do not have access to this page',
     ];
-    header("HTTP/1.0 405 Method Not Allowed");
+    header("HTTP/1.0 403 Forbidden");
     echo json_encode($data);
+    exit;
 }
 ?>

@@ -316,10 +316,21 @@ function deletePaket($paketParams) {
 
     $no_resi = mysqli_real_escape_string($conn, $paketParams['no_resi']);
 
-    $query = "DELETE FROM paket WHERE no_resi='$no_resi' LIMIT 1";
-    $result = mysqli_query($conn, $query);
+    // hapus dari tabel status paket
 
-    if($result && mysqli_affected_rows($conn) > 0) {
+    $queryStatusPaket = "DELETE FROM statuspaket WHERE no_resi='$no_resi'";
+    $resultStatusPaket = mysqli_query($conn, $queryStatusPaket);
+
+
+    // hapus dari paket
+    $queryPaket = "DELETE FROM paket WHERE no_resi='$no_resi' LIMIT 1";
+    $resultPaket = mysqli_query($conn, $queryPaket);
+
+
+
+
+
+    if($resultPaket && mysqli_affected_rows($conn) > 0) {
         $data = [
             'status' => 200,
             'message' => 'Delivery Package Deleted Successfully',

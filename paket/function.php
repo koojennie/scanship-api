@@ -25,6 +25,7 @@ function storePaket($paketInput) {
     $nama_penerima = mysqli_real_escape_string($conn, $paketInput['nama_penerima']);
     $notelp_penerima = mysqli_real_escape_string($conn, $paketInput['notelp_penerima']);
     $alamat_tujuan = mysqli_real_escape_string($conn, $paketInput['alamat_tujuan']);
+    $id_kurir = mysqli_real_escape_string($conn, $paketInput['id_kurir']);
     $tanggal_penerimaan = mysqli_real_escape_string($conn, $paketInput['tanggal_penerimaan']);
     $status_tanggal = mysqli_real_escape_string($conn, $paketInput['status_tanggal']);
     $status_lokasi = mysqli_real_escape_string($conn, $paketInput['status_lokasi']);
@@ -64,7 +65,7 @@ function storePaket($paketInput) {
         }
 
         // Insert into paket
-        $query2 = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan')";
+        $query2 = "INSERT INTO paket (no_resi, tanggal_pengiriman, nama_pengirim, asal_pengirim, nama_penerima, notelp_penerima, alamat_tujuan, tanggal_penerimaan, id_kurir) VALUES ('$no_resi', '$tanggal_pengiriman', '$nama_pengirim', '$asal_pengirim', '$nama_penerima', '$notelp_penerima', '$alamat_tujuan', '$tanggal_penerimaan', '$id_kurir')";
         $result2 = mysqli_query($conn, $query2);
 
         if(!$result2) {
@@ -118,7 +119,7 @@ function storePaket($paketInput) {
 function getPaketList() {
     global $conn;
 
-    $query = "SELECT * FROM paket";
+    $query = "SELECT paket.*, kurir.id_kurir, kurir.nama_kurir  FROM paket JOIN kurir ON paket.id_kurir = kurir.id_kurir";
     $query_run = mysqli_query($conn, $query);
 
     if($query_run) {

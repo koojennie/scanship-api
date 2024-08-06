@@ -15,11 +15,27 @@ function error422($message) {
     exit();
 }
 
+function getNextKurirId() {
+    global $conn;
+    $query = "SELECT id_kurir FROM kurir ORDER BY id_kurir DESC LIMIT 1";
+    $result = mysqli_query($conn, $query);
+    $latestId = mysqli_fetch_assoc($result)['id_kurir'];
+    
+    if ($latestId) {
+        $num = (int)substr($latestId, 2);
+        $newId = 'KR' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+    } else {
+        $newId = 'KR001';
+    }
+
+    return $newId;
+}
+
 function storeKurir($kurirInput) {
 
     global $conn;
 
-    $id_kurir = mysqli_real_escape_string($conn, $kurirInput['id_kurir']);
+    $id_kurir = getNextKurirId();
     $usn_kurir = mysqli_real_escape_string($conn, $kurirInput['usn_kurir']);
     $nama_kurir = mysqli_real_escape_string($conn, $kurirInput['nama_kurir']);
     $pw_kurir = mysqli_real_escape_string($conn, $kurirInput['pw_kurir']);
@@ -27,10 +43,7 @@ function storeKurir($kurirInput) {
     $email_kurir = mysqli_real_escape_string($conn, $kurirInput['email_kurir']);
     $notelp_kurir = mysqli_real_escape_string($conn, $kurirInput['notelp_kurir']);
 
-    if(empty(trim($id_kurir))) {
-        return error422('Masukkan ID Kurir');
-    }
-    else if(empty(trim($usn_kurir))) {
+    if(empty(trim($usn_kurir))) {
         return error422('Masukkan Username Kurir');
     }
     else if(empty(trim($nama_kurir))) {

@@ -123,7 +123,7 @@ function storePaket($paketInput) {
 function getPaketList() {
     global $conn;
 
-    $query = "SELECT paket.*, kurir.id_kurir, kurir.nama_kurir  FROM paket JOIN kurir ON paket.id_kurir = kurir.id_kurir";
+    $query = "SELECT paket.*, kurir.id_kurir, kurir.nama_kurir  FROM paket JOIN kurir ON paket.id_kurir = kurir.id_kurir ORDER BY paket.no_resi DESC";
     $query_run = mysqli_query($conn, $query);
 
     if($query_run) {
@@ -140,14 +140,15 @@ function getPaketList() {
             header("HTTP/1.0 200 Success");
             return json_encode($data);
 
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Package Delivery Found',
-            ];
-            header("HTTP/1.0 404 No Package Delivery Found");
-            return json_encode($data);
-        }
+        } 
+        // else {
+        //     $data = [
+        //         'status' => 404,
+        //         'message' => 'No Package Delivery Found',
+        //     ];
+        //     header("HTTP/1.0 404 No Package Delivery Found");
+        //     return json_encode($data);
+        // }
     }
     else
     {
